@@ -42,8 +42,9 @@
         <java.version>1.8</java.version>
         <source.encoding>UTF-8</source.encoding>
         <slf4j.version>1.7.21</slf4j.version>
+        <lang-extension.version>1.0.0</lang-extension.version>
         <guava.version>19.0</guava.version>
-        <kafka-ops.version>0.2.0</kafka-ops.version>
+        <kafka-ops.version>0.2.1</kafka-ops.version>
         <argparse4j.version>0.8.1</argparse4j.version>
         <junit.version>4.12</junit.version>
         <maven-compiler-plugin.version>3.7.0</maven-compiler-plugin.version>
@@ -62,6 +63,11 @@
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-simple</artifactId>
                 <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mydotey.lang</groupId>
+                <artifactId>lang-extension</artifactId>
+                <version>${lang-extension.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.google.guava</groupId>
@@ -95,6 +101,10 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.mydotey.lang</groupId>
+            <artifactId>lang-extension</artifactId>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>

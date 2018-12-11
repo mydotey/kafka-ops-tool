@@ -1,18 +1,16 @@
 package org.mydotey.tool.kafka.ops;
 
-import java.io.File;
-import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import org.mydotey.java.io.file.FileExtension;
 import org.mydotey.tool.kafka.ops.Assignments;
 import org.mydotey.tool.kafka.ops.Brokers;
 import org.mydotey.tool.kafka.ops.Clients;
-
-import com.google.common.io.Files;
 
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.helper.HelpScreenException;
@@ -95,8 +93,8 @@ public class TopicPartitionTransfer {
             String fileName = file.endsWith(".json") ? file.substring(0, file.length() - ".json".length()) : file;
             String oldFileName = fileName + ".old.json";
             String newFileName = fileName + ".new.json";
-            Files.write(currentAssignmentsJson, new File(oldFileName), StandardCharsets.UTF_8);
-            Files.write(newAssignmentsJson, new File(newFileName), StandardCharsets.UTF_8);
+            FileExtension.writeFileContent(Paths.get(oldFileName), currentAssignmentsJson);
+            FileExtension.writeFileContent(Paths.get(newFileName), newAssignmentsJson);
             System.out.printf("saved assignments to files: \n\t%s\n\t%s\n\n", oldFileName, newFileName);
 
             switch (action) {

@@ -4,10 +4,11 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+
+import org.mydotey.java.io.file.FileExtension;
 import org.mydotey.tool.kafka.ops.Assignments;
 import org.mydotey.tool.kafka.ops.Assignments.Status;
 import org.mydotey.tool.kafka.ops.Clients;
-import org.mydotey.util.FileUtil;
 
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.helper.HelpScreenException;
@@ -48,7 +49,7 @@ public class ReassignmentStatusPrinter {
         String file = ns.get(KEY_FILE);
         System.out.printf("arguments:\n\t%s: %s\n\t%s: %s\n\t%s: %s\n\n", Clients.KEY_BOOTSTRAP_SERVERS,
                 bootstrapServers, Clients.KEY_ZK_CONNECT, zkConnect, KEY_FILE, file);
-        String assignmentJson = FileUtil.readFileContent(Paths.get(file));
+        String assignmentJson = FileExtension.readFileContent(Paths.get(file));
 
         try (Clients clients = new Clients(properties)) {
             Assignments assignments = new Assignments(clients);
