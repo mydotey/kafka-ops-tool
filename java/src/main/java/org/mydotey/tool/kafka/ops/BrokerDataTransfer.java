@@ -1,19 +1,16 @@
 package org.mydotey.tool.kafka.ops;
 
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.mydotey.java.StringExtension;
 import org.mydotey.java.io.file.FileExtension;
 import org.mydotey.tool.kafka.ops.Assignments;
 import org.mydotey.tool.kafka.ops.Brokers;
 import org.mydotey.tool.kafka.ops.Clients;
 
-import com.google.common.base.Splitter;
 import com.google.common.collect.Sets;
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.helper.HelpScreenException;
@@ -44,14 +41,7 @@ public class BrokerDataTransfer {
         _argumentParser.addArgument("-bs", "--" + Clients.KEY_BOOTSTRAP_SERVERS).required(true);
         _argumentParser.addArgument("-zk", "--" + Clients.KEY_ZK_CONNECT).required(true);
         _argumentParser.addArgument("-f", "--" + KEY_FROM).type(Integer.class).required(true);
-        _argumentParser.addArgument("-t", "--" + KEY_TOS).type((p, a, v) -> {
-            if (StringExtension.isBlank(v))
-                return null;
-
-            List<Integer> results = new ArrayList<>();
-            Splitter.on(' ').omitEmptyStrings().splitToList(v.trim()).forEach(s -> results.add(Integer.valueOf(s)));
-            return results;
-        }).required(true);
+        _argumentParser.addArgument("-t", "--" + KEY_TOS).type(ArgumentTypes.LIST_INTEGER).required(true);
         _argumentParser.addArgument("-a", "--" + KEY_ACTION).choices(ACTION_GENERATE, ACTION_EXECUTE)
                 .setDefault(ACTION_GENERATE);
         _argumentParser.addArgument("--" + KEY_FILE).setDefault("assignments.json");
