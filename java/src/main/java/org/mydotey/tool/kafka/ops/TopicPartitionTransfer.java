@@ -1,16 +1,20 @@
 package org.mydotey.tool.kafka.ops;
 
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import org.mydotey.java.StringExtension;
 import org.mydotey.java.io.file.FileExtension;
 import org.mydotey.tool.kafka.ops.Assignments;
 import org.mydotey.tool.kafka.ops.Brokers;
 import org.mydotey.tool.kafka.ops.Clients;
+
+import com.google.common.base.Splitter;
 
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.helper.HelpScreenException;
@@ -25,7 +29,7 @@ import net.sourceforge.argparse4j.inf.Namespace;
 public class TopicPartitionTransfer {
 
     private static final String KEY_FROM = "from";
-    private static final String KEY_TO = "to";
+    private static final String KEY_TOS = "tos";
     private static final String KEY_ACTION = "action";
     private static final String KEY_FILE = "file";
     private static final String KEY_INTER_BROKER_LIMIT = "inter-broker-limit";
@@ -42,7 +46,14 @@ public class TopicPartitionTransfer {
         _argumentParser.addArgument("-bs", "--" + Clients.KEY_BOOTSTRAP_SERVERS).required(true);
         _argumentParser.addArgument("-zk", "--" + Clients.KEY_ZK_CONNECT).required(true);
         _argumentParser.addArgument("-f", "--" + KEY_FROM).type(Integer.class).required(true);
-        _argumentParser.addArgument("-t", "--" + KEY_TO).type(Integer.class).required(true);
+        _argumentParser.addArgument("-t", "--" + KEY_TOS).type((p, a, v) -> {
+            if (StringExtension.isBlank(v))
+                return null;
+
+            List<Integer> results = new ArrayList<>();
+            Splitter.on(' ').omitEmptyStrings().splitToList(v.trim()).forEach(s -> results.add(Integer.valueOf(s)));
+            return results;
+        }).required(true);
         _argumentParser.addArgument("-a", "--" + KEY_ACTION).choices(ACTION_GENERATE, ACTION_EXECUTE)
                 .setDefault(ACTION_GENERATE);
         _argumentParser.addArgument("--" + KEY_FILE).setDefault("assignments.json");
@@ -66,7 +77,7 @@ public class TopicPartitionTransfer {
         String zkConnect = ns.get(Clients.KEY_ZK_CONNECT);
         properties.put(Clients.KEY_ZK_CONNECT, zkConnect);
         int from = ns.getInt(KEY_FROM);
-        int to = ns.getInt(KEY_TO);
+        List<Integer> tos = ns.getList(KEY_TOS);
         String action = ns.get(KEY_ACTION);
         String file = ns.get(KEY_FILE);
         long interBrokerLimit = ns.get(KEY_INTER_BROKER_LIMIT);
@@ -75,7 +86,7 @@ public class TopicPartitionTransfer {
         System.out.printf(
                 "arguments:\n\t%s: %s\n\t%s: %s\n\t%s: %s\n\t%s: %s\n\t%s: %s\n\t%s: %s\n\t%s: %s\n\t%s: %s\n\t%s: %s\n\n",
                 Clients.KEY_BOOTSTRAP_SERVERS, bootstrapServers, Clients.KEY_ZK_CONNECT, zkConnect, KEY_FROM, from,
-                KEY_TO, to, KEY_ACTION, action, KEY_FILE, file, KEY_INTER_BROKER_LIMIT, interBrokerLimit, KEY_TOPIC,
+                KEY_TOS, tos, KEY_ACTION, action, KEY_FILE, file, KEY_INTER_BROKER_LIMIT, interBrokerLimit, KEY_TOPIC,
                 topic, KEY_PARTITION, partitions);
 
         try (Clients clients = new Clients(properties)) {
@@ -84,7 +95,7 @@ public class TopicPartitionTransfer {
             Map<String, Map<Integer, List<Integer>>> currentAssignmentsMap = brokers.getAssignments(from, topic,
                     partitions);
             Map<String, Map<Integer, List<Integer>>> newAssignmentsMap = brokers.generateAssignmentsForTransfer(from,
-                    to, topic, partitions);
+                    tos, topic, partitions);
             String currentAssignmentsJson = assignments.toJson(currentAssignmentsMap);
             String newAssignmentsJson = assignments.toJson(newAssignmentsMap);
             System.out.printf("\ncurrent assignments: \n%s\n\nnew assignments:\n%s\n\n", currentAssignmentsJson,
