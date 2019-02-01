@@ -1,4 +1,3 @@
 #!/bin/bash
 
-java -jar kafka-ops-tool.jar org.mydotey.tool.kafka.ops.ReassignmentStatusPrinter $@
-
+java -jar kafka-ops-tool.jar org.mydotey.tool.kafka.ops.ReassignmentStatusPrinter "$@"

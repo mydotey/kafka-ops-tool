@@ -1,3 +1,3 @@
 #!/bin/bash
 
-java -jar kafka-ops-tool.jar org.mydotey.tool.kafka.ops.BrokerDataTransfer $@
+java -jar kafka-ops-tool.jar org.mydotey.tool.kafka.ops.BrokerDataTransfer "$@"
